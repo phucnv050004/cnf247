@@ -3,136 +3,334 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Lì Xì May Mắn</title>
 
     <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #ff4e50, #f9d423);
-            color: white;
+        * {
+            box-sizing: border-box;
         }
 
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+
+            /* ẢNH NỀN */
+            background-image: url("https://i.pinimg.com/736x/41/ba/e4/41bae4f507694a5408f34f8f1add5ada.jpg");
+            background-size: cover;
+            /* phủ toàn màn hình */
+            background-position: center;
+            /* căn giữa */
+            background-repeat: no-repeat;
+            /* không lặp */
+        }
+
+
         h1 {
-            margin-top: 30px;
+            text-align: center;
+            margin-top: 40px
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            margin: 0;
         }
 
         .container {
-            margin-top: 50px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            flex: 1;
+            /* chiếm hết phần còn lại */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 20px;
+            align-content: center;
         }
 
         .envelope {
-            width: 100px;
-            height: 140px;
+            width: 100%;
+            aspect-ratio: 3 / 4;
             background: red;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            transition: transform 0.3s;
+            font-size: 28px;
+            transition: transform 0.2s;
         }
 
-        .envelope:hover {
-            transform: scale(1.1);
+        .envelope:active {
+            transform: scale(0.95);
         }
 
         .opened {
             background: gold;
             color: black;
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
+            padding: 4px;
+            text-align: center;
         }
 
         #result {
-            margin-top: 40px;
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 16px;
+            padding: 5px;
+            min-height: 40px;
         }
 
         button {
-            margin-top: 20px;
-            padding: 10px 20px;
+            padding: 8px 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            margin-bottom: 5px;
         }
 
         #musicBtn {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        /* ===== POPUP TRÚNG THƯỞNG ===== */
+        .win-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .win-popup.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .win-box {
+            background: gold;
+            color: black;
+            padding: 30px 20px;
+            border-radius: 16px;
+            text-align: center;
+            animation: popScale 0.4s ease;
+        }
+
+        .win-box h2 {
+            margin: 0 0 10px 0;
+            font-size: 22px;
+        }
+
+        .win-box p {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        @keyframes popScale {
+            0% {
+                transform: scale(0.5);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* ===== CONFETTI ===== */
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: red;
+            top: -10px;
+            animation: fall linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* ===== LOGIN POPUP ===== */
+        #loginOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        #loginBox {
+            background: white;
+            color: black;
+            padding: 30px 25px;
+            border-radius: 16px;
+            text-align: center;
+            width: 280px;
+            animation: popScale 0.3s ease;
+        }
+
+        #loginBox input {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+
+        #gameSection {
+            display: none;
+        }
+
+        #userInfo {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 10px;
+            border-radius: 8px;
         }
     </style>
+
 </head>
+
 
 <body>
 
     <h1>🧧 cnf247 🧧</h1>
     <p>Chọn 1 bao lì xì để nhận tiền!</p>
-    <button onclick="loginGoogle()">Đăng nhập bằng Google</button>
+
     <!-- Nhạc nền -->
     <audio id="bgMusic" loop preload="auto">
         <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
     </audio>
 
-
     <!-- Âm thanh mở lì xì -->
     <audio id="openSound" preload="auto">
         <source src="https://www.soundjay.com/buttons/sounds/button-09.mp3" type="audio/mpeg">
     </audio>
+    <div id="loginOverlay">
+        <div id="loginBox">
+            <input type="text" id="username" placeholder="Tài khoản">
+            <input type="password" id="password" placeholder="Mật khẩu">
+            <button onclick="login()">Đăng nhập</button>
+            <p id="loginError" style="color:yellow;"></p>
+        </div>
+    </div>
 
-    <button id="musicBtn" onclick="toggleMusic()">🔊 Bật nhạc</button>
 
-    <div class="container" id="game"></div>
+    <div id="gameSection">
+        <div id="userInfo"></div>
+        <button id="musicBtn" onclick="toggleMusic()">🔊 Bật nhạc</button>
 
-    <div id="result"></div>
-    <button onclick="resetGame()">Chơi lại</button>
+        <div class="container" id="game"></div>
 
-    <script type="module">
+        <div id="result"></div>
 
-        /* ================= FIREBASE ================= */
+        <button onclick="resetGame()">Chơi lại</button>
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged }
-            from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc }
-            from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCzw5hiD2Tzu5wIssBP_lRHDuE9IE2a7wk",
-            authDomain: "lixicnf.firebaseapp.com",
-            projectId: "lixicnf",
-            storageBucket: "lixicnf.firebasestorage.app",
-            messagingSenderId: "813322641674",
-            appId: "1:813322641674:web:221eb442863d04a093daf3"
-        };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+    <script>
+        /* ===== LOGIN SYSTEM ===== */
 
-        /* ================= LOGIN ================= */
+        /* ===== LOGIN SYSTEM ===== */
 
-        window.loginGoogle = function () {
-            signInWithPopup(auth, provider);
-        };
+        const ACCOUNTS = [
+            { username: "admin", password: "123456" },
+            { username: "user1", password: "111111" },
+            { username: "boss", password: "999999" }
+        ];
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.querySelector("button[onclick='loginGoogle()']").innerText =
-                    "👋 " + user.displayName;
+        let isLoggedIn = false;
+
+        function login() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            const error = document.getElementById("loginError");
+            document.getElementById("userInfo").innerHTML =
+                "👋 Xin chào, <b>" + user + "</b> " +
+                '<button onclick="logout()" style="font-size:10px;padding:3px 6px;margin-left:5px;">Đăng xuất</button>';
+
+            const found = ACCOUNTS.find(acc =>
+                acc.username === user && acc.password === pass
+            );
+
+            if (found) {
+                isLoggedIn = true;
+                localStorage.setItem("loggedUser", user);
+
+                document.getElementById("loginOverlay").style.display = "none";
+
+                document.getElementById("gameSection").style.display = "block";
+            } else {
+                error.innerText = "Sai tài khoản hoặc mật khẩu!";
             }
-        });
+        }
 
-        /* ================= GAME ================= */
+        function logout() {
+            localStorage.removeItem("loggedUser");
+            location.reload();
+        }
+
+        window.onload = function () {
+
+            const savedUser = localStorage.getItem("loggedUser");
+
+            if (savedUser) {
+
+                const confirmLogout = confirm("Bạn có muốn đăng xuất không?");
+                document.getElementById("gameSection").style.display = "block";
+
+                document.getElementById("userInfo").innerHTML =
+                    "👋 Xin chào, <b>" + savedUser + "</b> " +
+                    '<button onclick="logout()" style="font-size:10px;padding:3px 6px;margin-left:5px;">Đăng xuất</button>';
+
+                if (confirmLogout) {
+                    localStorage.removeItem("loggedUser");
+                    return;
+                }
+
+                isLoggedIn = true;
+                document.getElementById("loginOverlay").style.display = "none";
+                if (localStorage.getItem("played_" + savedUser)) {
+                    played = true;
+                    alert("Tài khoản này đã chơi rồi!");
+                }
+            }
+        };
+
+
+
+        const savedUser = localStorage.getItem("loggedUser");
+        if (savedUser) {
+            isLoggedIn = true;
+            document.getElementById("loginBox").innerHTML =
+                "👋 Xin chào " + savedUser +
+                ' <button onclick="logout()">Đăng xuất</button>';
+        }
 
         const basePrizes = [10000, 20000, 50000, 100000, 200000, 500000];
         let played = false;
@@ -169,8 +367,6 @@
             }
         }
 
-        window.toggleMusic = toggleMusic;
-
         function createGame() {
             const game = document.getElementById("game");
             game.innerHTML = "";
@@ -181,7 +377,20 @@
                 envelope.classList.add("envelope");
                 envelope.innerHTML = "🧧";
 
-                envelope.onclick = async function () {
+                envelope.onclick = function () {
+
+                    if (!isLoggedIn) {
+                        alert("Vui lòng đăng nhập trước!");
+                        return;
+                    }
+
+                    const currentUser = localStorage.getItem("loggedUser");
+
+                    if (localStorage.getItem("played_" + currentUser)) {
+                        alert("Tài khoản này đã chơi rồi!");
+                        return;
+                    }
+
                     if (played) return;
 
                     played = true;
@@ -191,35 +400,23 @@
                     envelope.classList.add("opened");
                     envelope.innerHTML = money.toLocaleString() + " đ";
 
-                    document.getElementById("result").innerHTML =
-                        "🎉 Chúc mừng bạn nhận được " +
-                        money.toLocaleString() +
-                        " đ!";
+                    // Lưu trạng thái đã chơi
+                    localStorage.setItem("played_" + currentUser, "true");
 
-                    // Lưu lên Firebase
-                    const user = auth.currentUser;
-                    if (user) {
-                        await setDoc(doc(db, "players", user.uid), {
-                            name: user.displayName,
-                            lastWin: money,
-                            time: new Date()
-                        });
-                    }
+                    showWinEffect(money);
                 };
 
                 game.appendChild(envelope);
             });
         }
 
-        window.resetGame = function () {
+        function resetGame() {
             played = false;
             document.getElementById("result").innerHTML = "";
             createGame();
-        };
+        }
 
         createGame();
-
-        /* ================= AUTO MUSIC ================= */
 
         document.addEventListener("click", function startMusicOnce() {
             if (bgMusic.paused) {
@@ -229,10 +426,47 @@
             }
             document.removeEventListener("click", startMusicOnce);
         });
+        function showWinEffect(money) {
+            const popup = document.getElementById("winPopup");
+            const winAmount = document.getElementById("winAmount");
+
+            winAmount.innerText = money.toLocaleString() + " đ";
+            popup.classList.add("active");
+
+            createConfetti();
+        }
+
+        function closePopup() {
+            document.getElementById("winPopup").classList.remove("active");
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.background =
+                    `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+                confetti.style.animationDuration =
+                    (Math.random() * 2 + 2) + "s";
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
 
     </script>
-
-
+    <div class="win-popup" id="winPopup">
+        <div class="win-box">
+            <h2>🎉 Chúc Mừng 🎉</h2>
+            <p id="winAmount"></p>
+            <button onclick="closePopup()">Đóng</button>
+        </div>
+    </div>
 
 </body>
 
