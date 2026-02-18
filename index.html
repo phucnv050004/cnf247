@@ -34,7 +34,7 @@
 
         h1 {
             text-align: center;
-            margin-top: 60px
+            margin-top: 90px
         }
 
         p {
@@ -49,11 +49,13 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-            padding: 40px;
+            padding: 30px;
             align-content: center;
         }
 
         .envelope {
+             aspect-ratio: 2 / 3; 
+              max-height: 220px;
             width: 100%;
             height: 100%;
             border-radius: 16px;
@@ -589,7 +591,7 @@
             // ===== Nếu là VIP → luôn có 3 bao đặc biệt =====
             if (VIP_USERS.includes(currentUser)) {
 
-                for (let i = 0; i < 21; i++) {
+                for (let i = 0; i < 17; i++) {
                     const randomSmall = smallPrizes[Math.floor(Math.random() * smallPrizes.length)];
                     prizes.push(randomSmall);
                 }
@@ -604,13 +606,13 @@
 
                 if (Math.random() < 0.9) {
                     // 90% chỉ tiền nhỏ
-                    for (let i = 0; i < 24; i++) {
+                    for (let i = 0; i < 20; i++) {
                         const randomSmall = smallPrizes[Math.floor(Math.random() * smallPrizes.length)];
                         prizes.push(randomSmall);
                     }
                 } else {
                     // 10% có đặc biệt
-                    for (let i = 0; i < 21; i++) {
+                    for (let i = 0; i < 17; i++) {
                         const randomSmall = smallPrizes[Math.floor(Math.random() * smallPrizes.length)];
                         prizes.push(randomSmall);
                     }
@@ -725,6 +727,7 @@
 
                 setTimeout(() => confetti.remove(), 4000);
             }
+            
         }
         function saveHistory(amount) {
             const user = localStorage.getItem("loggedUser");
