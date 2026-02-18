@@ -11,24 +11,21 @@
             box-sizing: border-box;
         }
 
+        html,
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             font-family: Arial, sans-serif;
             color: white;
-            overflow: hidden;
 
-            /* ẢNH NỀN */
-            background-image: url("https://i.pinimg.com/1200x/af/58/aa/af58aa002a5569cab12e692b0b0c5b16.jpg");
-            background-size: cover;
-            /* phủ toàn màn hình */
-            background-position: center;
-            /* căn giữa */
-            background-repeat: no-repeat;
-            /* không lặp */
+            background: url("https://i.pinimg.com/1200x/af/58/aa/af58aa002a5569cab12e692b0b0c5b16.jpg") center center / cover no-repeat fixed;
         }
 
 
@@ -47,15 +44,15 @@
             flex: 1;
             /* chiếm hết phần còn lại */
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             padding: 30px;
             align-content: center;
         }
 
         .envelope {
-             aspect-ratio: 2 / 3; 
-              max-height: 220px;
+            aspect-ratio: 2 / 3;
+            max-height: 220px;
             width: 100%;
             height: 100%;
             border-radius: 16px;
@@ -443,7 +440,7 @@
         <div id="historyBox"></div>
         <div id="result"></div>
 
-       
+
 
     </div>
 
@@ -727,7 +724,7 @@
 
                 setTimeout(() => confetti.remove(), 4000);
             }
-            
+
         }
         function saveHistory(amount) {
             const user = localStorage.getItem("loggedUser");
