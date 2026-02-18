@@ -313,6 +313,7 @@
 
         .shake {
             animation: shake 0.4s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px gold);
         }
 
         /* ===== LOGIN DESIGN XỊN ===== */
@@ -451,6 +452,7 @@
         // ===== DANH SÁCH USER ĐƯỢC TRÚNG LỚN =====
         const VIP_USERS = ["11111111", "25012853"];
         /* ===== LOGIN SYSTEM ===== */
+  
 
         const ACCOUNTS = [
             { id: "23011585", username: "Thảo Min", password: "cnf@123456" },
@@ -671,6 +673,32 @@
                 game.appendChild(envelope);
             });
         }
+        // ===== HINT: rung 1 bao nhỏ nhất sau 3 giây =====
+        clearTimeout(hintTimer);
+
+        hintTimer = setTimeout(() => {
+
+            if (played) return;
+
+            const envelopes = document.querySelectorAll(".envelope");
+
+            // Tìm bao có tiền nhỏ nhất
+            let minMoney = Math.min(...prizes);
+            let minIndex = prizes.indexOf(minMoney);
+
+            const targetEnvelope = envelopes[minIndex];
+
+            if (targetEnvelope) {
+                targetEnvelope.classList.add("shake");
+
+                // Ngừng rung sau 2 giây
+                setTimeout(() => {
+                    targetEnvelope.classList.remove("shake");
+                }, 4000);
+            }
+            
+
+        }, 6000);
 
 
 
