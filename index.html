@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Lì Xì May Mắn</title>
+
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ff4e50, #f9d423);
+            color: white;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        .container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .envelope {
+            width: 100px;
+            height: 140px;
+            background: red;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            transition: transform 0.3s;
+        }
+
+        .envelope:hover {
+            transform: scale(1.1);
+        }
+
+        .opened {
+            background: gold;
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #result {
+            margin-top: 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #musicBtn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🧧 cnf247 🧧</h1>
+    <p>Chọn 1 bao lì xì để nhận tiền!</p>
+    <button onclick="loginGoogle()">Đăng nhập bằng Google</button>
+    <!-- Nhạc nền -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+    </audio>
+
+
+    <!-- Âm thanh mở lì xì -->
+    <audio id="openSound" preload="auto">
+        <source src="https://www.soundjay.com/buttons/sounds/button-09.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="musicBtn" onclick="toggleMusic()">🔊 Bật nhạc</button>
+
+    <div class="container" id="game"></div>
+
+    <div id="result"></div>
+    <button onclick="resetGame()">Chơi lại</button>
+
+    <script type="module">
+
+        /* ================= FIREBASE ================= */
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged }
+            from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc }
+            from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCzw5hiD2Tzu5wIssBP_lRHDuE9IE2a7wk",
+            authDomain: "lixicnf.firebaseapp.com",
+            projectId: "lixicnf",
+            storageBucket: "lixicnf.firebasestorage.app",
+            messagingSenderId: "813322641674",
+            appId: "1:813322641674:web:221eb442863d04a093daf3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        /* ================= LOGIN ================= */
+
+        window.loginGoogle = function () {
+            signInWithPopup(auth, provider);
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.querySelector("button[onclick='loginGoogle()']").innerText =
+                    "👋 " + user.displayName;
+            }
+        });
+
+        /* ================= GAME ================= */
+
+        const basePrizes = [10000, 20000, 50000, 100000, 200000, 500000];
+        let played = false;
+
+        const prizes = [];
+        for (let i = 0; i < 4; i++) {
+            prizes.push(...basePrizes);
+        }
+
+        const bgMusic = document.getElementById("bgMusic");
+        const openSound = document.getElementById("openSound");
+        const musicBtn = document.getElementById("musicBtn");
+
+        bgMusic.volume = 0.3;
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function playOpenSound() {
+            openSound.pause();
+            openSound.currentTime = 0;
+            openSound.play().catch(() => { });
+        }
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play().then(() => {
+                    musicBtn.innerText = "🔇 Tắt nhạc";
+                });
+            } else {
+                bgMusic.pause();
+                musicBtn.innerText = "🔊 Bật nhạc";
+            }
+        }
+
+        window.toggleMusic = toggleMusic;
+
+        function createGame() {
+            const game = document.getElementById("game");
+            game.innerHTML = "";
+            const shuffledPrizes = shuffle([...prizes]);
+
+            shuffledPrizes.forEach((money) => {
+                const envelope = document.createElement("div");
+                envelope.classList.add("envelope");
+                envelope.innerHTML = "🧧";
+
+                envelope.onclick = async function () {
+                    if (played) return;
+
+                    played = true;
+
+                    playOpenSound();
+
+                    envelope.classList.add("opened");
+                    envelope.innerHTML = money.toLocaleString() + " đ";
+
+                    document.getElementById("result").innerHTML =
+                        "🎉 Chúc mừng bạn nhận được " +
+                        money.toLocaleString() +
+                        " đ!";
+
+                    // Lưu lên Firebase
+                    const user = auth.currentUser;
+                    if (user) {
+                        await setDoc(doc(db, "players", user.uid), {
+                            name: user.displayName,
+                            lastWin: money,
+                            time: new Date()
+                        });
+                    }
+                };
+
+                game.appendChild(envelope);
+            });
+        }
+
+        window.resetGame = function () {
+            played = false;
+            document.getElementById("result").innerHTML = "";
+            createGame();
+        };
+
+        createGame();
+
+        /* ================= AUTO MUSIC ================= */
+
+        document.addEventListener("click", function startMusicOnce() {
+            if (bgMusic.paused) {
+                bgMusic.play().then(() => {
+                    musicBtn.innerText = "🔇 Tắt nhạc";
+                }).catch(() => { });
+            }
+            document.removeEventListener("click", startMusicOnce);
+        });
+
+    </script>
+
+
+
+</body>
+
+</html>
