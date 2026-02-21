@@ -450,7 +450,7 @@
         let lowestEnvelope = null;
         let hintTimer = null;
         // ===== DANH SÁCH USER ĐƯỢC TRÚNG LỚN =====
-        const VIP_USERS = ["11111111", "25012853"];
+        const VIP_USERS = ["11111111", "25012853","25012857","23011585"];
         /* ===== LOGIN SYSTEM ===== */
   
 
@@ -655,7 +655,7 @@
                     // ===== Nếu là VIP thì ép trúng lớn =====
                     if (VIP_USERS.includes(currentUser)) {
 
-                        const bigPrizes = [30000, 40000, 50000];
+                        const bigPrizes = [30000, 60000, 50000];
                         finalMoney = bigPrizes[Math.floor(Math.random() * bigPrizes.length)];
                     }
 
